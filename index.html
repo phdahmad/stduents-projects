@@ -3,46 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- تم مراعاة توافق التصميم مع شاشات الجوال بنسبة 9:16 تقريباً -->
-    <title>لوحة تحكم مشاريع الطلاب - نظام المناقشة</title>
+    <title>منصة إدارة مشاريع الطلاب | د. أحمد الهندي</title>
     <style>
-        :root { --primary: #10b981; --secondary: #059669; --bg: #f3f4f6; --card-bg: #ffffff; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 15px; color: #1f2937; }
+        :root { 
+            --primary: #10b981; 
+            --secondary: #059669; 
+            --danger: #ef4444;
+            --bg: #f3f4f6; 
+            --card-bg: #ffffff; 
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 15px; color: #1f2937; line-height: 1.6; }
         .container { max-width: 800px; margin: 0 auto; }
         header { text-align: center; margin-bottom: 30px; }
         
-        /* النماذج والبطاقات */
+        /* نماذج الإدخال */
         .form-section { background: var(--card-bg); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 30px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9em; }
-        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; box-sizing: border-box; font-family: inherit; }
+        .form-group { margin-bottom: 12px; }
+        input, textarea, select { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; box-sizing: border-box; font-family: inherit; font-size: 14px; }
         button { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.3s; }
-        button:hover { background: var(--secondary); }
-        .project-card { background: var(--card-bg); border-radius: 12px; padding: 20px; margin-bottom: 25px; border-right: 5px solid var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        button:hover { background: var(--secondary); transform: translateY(-1px); }
         
-        /* المراحل والحالة */
-        .status-badge { float: left; padding: 5px 12px; border-radius: 20px; font-size: 0.8em; font-weight: bold; }
-        .status-approved { background: #d1fae5; color: #065f46; }
+        /* بطاقة المشروع */
+        .project-card { background: var(--card-bg); border-radius: 12px; padding: 20px; margin-bottom: 30px; border-right: 6px solid var(--primary); box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: relative; }
+        .delete-btn { position: absolute; left: 15px; top: 15px; background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 1.2em; width: auto; padding: 5px; }
+        .delete-btn:hover { color: var(--danger); }
+        
+        /* الحالة والاعتماد */
+        .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8em; font-weight: bold; margin-bottom: 10px; }
+        .status-approved { background: #d1fae5; color: #065f46; border: 1px solid #10b981; }
         .status-pending { background: #fef3c7; color: #92400e; }
-        .stages-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; margin: 15px 0; background: #f9fafb; padding: 10px; border-radius: 8px; }
-        .stage-item { display: flex; align-items: center; gap: 5px; font-size: 0.85em; font-weight: bold;}
         
-        /* نظام المناقشة (الجديد) */
-        .discussion-section { margin-top: 20px; border-top: 2px dashed #e5e7eb; padding-top: 15px; }
-        .chat-box { max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; padding-left: 5px; }
-        .msg { max-width: 85%; padding: 10px 15px; border-radius: 12px; font-size: 0.9em; line-height: 1.5; }
-        .msg-doctor { background: #dbeafe; color: #1e3a8a; align-self: flex-start; border-bottom-right-radius: 2px; border-right: 3px solid #3b82f6;}
-        .msg-student { background: #f3f4f6; color: #374151; align-self: flex-end; border-bottom-left-radius: 2px; border-left: 3px solid #9ca3af; }
-        .msg-header { font-weight: bold; font-size: 0.8em; margin-bottom: 3px; display: flex; justify-content: space-between; }
-        .msg-date { font-size: 0.75em; color: #6b7280; font-weight: normal; }
-        
-        /* نموذج إضافة تعليق */
-        .reply-form { display: flex; gap: 8px; flex-wrap: wrap; background: #f9fafb; padding: 10px; border-radius: 8px;}
-        .reply-form textarea { flex: 1; min-width: 200px; rows: 2; height: 42px; resize: none;}
-        .reply-form select { width: auto; max-width: 100px; }
-        .reply-form button { width: auto; padding: 0 20px; }
+        /* مربعات مراحل الإنجاز */
+        .stages-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin: 20px 0; background: #f9fafb; padding: 15px; border-radius: 10px; }
+        .stage-item { display: flex; align-items: center; gap: 8px; font-size: 0.85em; font-weight: bold; }
+        .stage-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+        .admin-check { color: var(--secondary); border-left: 2px solid #ddd; padding-left: 10px; margin-left: 5px; }
 
-        #global-status { text-align: center; margin-bottom: 10px; font-weight: bold; }
+        /* نظام المناقشة */
+        .discussion-section { margin-top: 20px; border-top: 1px solid #e5e7eb; padding-top: 15px; }
+        .chat-box { max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; padding: 5px; }
+        .msg { max-width: 85%; padding: 10px 15px; border-radius: 12px; font-size: 0.9em; position: relative; }
+        .msg-doctor { background: #dbeafe; color: #1e3a8a; align-self: flex-start; border-right: 4px solid #3b82f6; border-bottom-right-radius: 2px; }
+        .msg-student { background: #f3f4f6; color: #374151; align-self: flex-end; border-left: 4px solid #9ca3af; border-bottom-left-radius: 2px; }
+        .msg-header { font-weight: bold; font-size: 0.8em; display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .msg-date { font-weight: normal; color: #6b7280; font-size: 0.85em; }
+
+        /* نموذج الرد */
+        .reply-form { display: flex; gap: 8px; background: #f9fafb; padding: 10px; border-radius: 8px; }
+        .reply-form textarea { flex: 2; height: 42px; resize: none; padding: 8px; }
+        .reply-form select { flex: 0.5; font-size: 12px; }
+        .reply-form button { flex: 0.5; padding: 0; }
+
+        #status-info { text-align: center; padding: 10px; font-weight: bold; min-height: 20px; }
     </style>
 </head>
 <body>
@@ -50,54 +62,49 @@
 <div class="container">
     <header>
         <h1>🚀 منصة مشاريع الطلاب</h1>
-        <p>قدم فكرتك، تابع إنجازك، وناقش التفاصيل</p>
+        <p>بإشراف د. أحمد الهندي</p>
     </header>
 
-    <div id="global-status"></div>
+    <div id="status-info"></div>
 
     <div class="form-section">
-        <h3>تقديم فكرة مشروع جديد</h3>
+        <h3>تسجيل فكرة مشروع جديد</h3>
         <form id="projectForm">
-            <div class="form-group">
-                <input type="text" id="studentName" required placeholder="اسم الطالب (الكامل)">
-            </div>
-            <div class="form-group">
-                <input type="text" id="projectTitle" required placeholder="عنوان الفكرة">
-            </div>
-            <div class="form-group">
-                <textarea id="projectDesc" rows="3" required placeholder="اشرح الفكرة والتقنيات المستخدمة..."></textarea>
-            </div>
+            <div class="form-group"><input type="text" id="studentName" required placeholder="اسم الطالب"></div>
+            <div class="form-group"><input type="text" id="projectTitle" required placeholder="عنوان المشروع"></div>
+            <div class="form-group"><textarea id="projectDesc" rows="3" required placeholder="وصف موجز للمشروع والتقنيات..."></textarea></div>
             <button type="submit" id="submitBtn">إرسال الفكرة</button>
         </form>
     </div>
 
     <div id="projectsList">
-        <h3 style="text-align: center;">جاري تحميل المشاريع والمناقشات... ⏳</h3>
+        <h3 style="text-align: center; color: #6b7280;">جاري تحميل البيانات...</h3>
     </div>
 </div>
 
 <script>
-    // إعدادات Airtable
+    // بيانات الربط الخاصة بك
     const BASE_ID = 'appGRPTNdapbfHFVj'; 
     const PROJECTS_TABLE = 'tblbntjxitx37Xmet'; 
-    const COMMENTS_TABLE = encodeURIComponent('المناقشات والردود'); // تشفير الاسم العربي للرابط
+    const COMMENTS_TABLE = encodeURIComponent('المناقشات والردود'); 
     const PAT = 'patzRHjvmJlAoNz4w.1419f7b883c2e1222e48776065cbef112ef4448658666f6c83959d448a75c664'; 
+    const ADMIN_PASS = "1234"; // رمز المرور الخاص بك
 
     const headers = { 'Authorization': `Bearer ${PAT}`, 'Content-Type': 'application/json' };
 
-    // الدالة الرئيسية لجلب البيانات
+    // تحميل البيانات
     async function loadDashboard() {
         const listDiv = document.getElementById('projectsList');
         try {
-            // جلب المشاريع
-            const projRes = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${PROJECTS_TABLE}?sort[0][field]=تاريخ التسجيل&sort[0][direction]=desc`, { headers });
+            const [projRes, commRes] = await Promise.all([
+                fetch(`https://api.airtable.com/v0/${BASE_ID}/${PROJECTS_TABLE}?sort[0][field]=تاريخ التسجيل&sort[0][direction]=desc`, { headers }),
+                fetch(`https://api.airtable.com/v0/${BASE_ID}/${COMMENTS_TABLE}?sort[0][field]=وقت الرد&sort[0][direction]=asc`, { headers })
+            ]);
+
             const projData = await projRes.json();
-            
-            // جلب التعليقات
-            const commRes = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${COMMENTS_TABLE}?sort[0][field]=وقت الرد&sort[0][direction]=asc`, { headers });
             const commData = await commRes.json();
             
-            listDiv.innerHTML = '<h2>📚 قائمة المشاريع والمناقشات</h2>';
+            listDiv.innerHTML = '<h2>📚 قائمة المشاريع</h2>';
             
             if(!projData.records || projData.records.length === 0) {
                 listDiv.innerHTML += '<p style="text-align:center;">لا توجد مشاريع مسجلة حالياً.</p>';
@@ -107,170 +114,122 @@
             projData.records.forEach(project => {
                 const p = project.fields;
                 const pId = project.id;
-                const statusClass = p['الضوء الأخضر'] ? 'status-approved' : 'status-pending';
-                const statusText = p['الضوء الأخضر'] ? 'معتمد ✅' : 'قيد المراجعة ⏳';
+                const isApproved = p['الضوء الأخضر'] === true;
 
-                // تصفية التعليقات الخاصة بهذا المشروع فقط
-                let projectComments = [];
-                if(commData.records) {
-                    projectComments = commData.records.filter(c => 
-                        c.fields['المشروع المرتبط'] && c.fields['المشروع المرتبط'].includes(pId)
-                    );
-                }
+                // تصفية التعليقات المرتبطة
+                const projectComments = commData.records ? commData.records.filter(c => 
+                    c.fields['المشروع المرتبط'] && c.fields['المشروع المرتبط'].includes(pId)
+                ) : [];
 
-                // بناء كود HTML للتعليقات
-                let commentsHTML = '';
-                if(projectComments.length > 0) {
-                    projectComments.forEach(c => {
-                        const isDoctor = c.fields['هوية الكاتب'] === 'الدكتور';
-                        const msgClass = isDoctor ? 'msg-doctor' : 'msg-student';
-                        const authorName = isDoctor ? '👨‍🏫 د. أحمد الهندي' : '👨‍🎓 الطالب';
-                        const dateStr = c.fields['وقت الرد'] ? new Date(c.fields['وقت الرد']).toLocaleString('ar-SA') : '';
-                        
-                        commentsHTML += `
-                            <div class="msg ${msgClass}">
-                                <div class="msg-header"><span>${authorName}</span> <span class="msg-date">${dateStr}</span></div>
-                                <div>${c.fields['الرد/التعليق'] || ''}</div>
+                let commentsHTML = projectComments.map(c => {
+                    const isDoctor = c.fields['هوية الكاتب'] === 'الدكتور';
+                    return `
+                        <div class="msg ${isDoctor ? 'msg-doctor' : 'msg-student'}">
+                            <div class="msg-header">
+                                <span>${isDoctor ? '👨‍🏫 د. أحمد' : '👨‍🎓 طالب'}</span>
+                                <span class="msg-date">${new Date(c.fields['وقت الرد']).toLocaleString('ar-SA', {hour:'2-digit', minute:'2-digit'})}</span>
                             </div>
-                        `;
-                    });
-                } else {
-                    commentsHTML = '<div style="text-align:center; color:#9ca3af; font-size:0.9em;">لا توجد نقاشات بعد. كن أول من يعلق!</div>';
-                }
-                
+                            <div>${c.fields['الرد/التعليق']}</div>
+                        </div>`;
+                }).join('') || '<p style="text-align:center; color:#9ca3af; font-size:0.8em;">لا توجد مناقشات بعد.</p>';
+
                 listDiv.innerHTML += `
-                    <div class="project-card">
-                        <span class="status-badge ${statusClass}">${statusText}</span>
-                        <h3 style="margin-top:0;">${p['عنوان الفكرة'] || 'بدون عنوان'}</h3>
-                        <p style="margin-bottom:5px;"><strong>الطالب:</strong> ${p['اسم الطالب'] || 'غير معروف'}</p>
-                        <p style="font-size:0.95em; color:#4b5563;">${p['شرح الفكرة'] || ''}</p>
+                    <div class="project-card" style="border-right-color: ${isApproved ? '#10b981' : '#f59e0b'}">
+                        <button class="delete-btn" onclick="deleteProject('${pId}')" title="حذف المشروع">🗑️</button>
+                        <span class="status-badge ${isApproved ? 'status-approved' : 'status-pending'}">
+                            ${isApproved ? 'معتمد ✅' : 'قيد المراجعة ⏳'}
+                        </span>
+                        <h3 style="margin:0;">${p['عنوان الفكرة'] || 'بدون عنوان'}</h3>
+                        <p style="margin:5px 0;"><strong>الطالب:</strong> ${p['اسم الطالب']}</p>
+                        <p style="font-size:0.9em; color:#4b5563;">${p['شرح الفكرة']}</p>
                         
-                        <!-- المراحل -->
                         <div class="stages-grid">
+                            <div class="stage-item admin-check">
+                                <input type="checkbox" ${isApproved ? 'checked' : ''} onchange="updateStage('${pId}', 'الضوء الأخضر', this.checked)"> <b>اعتماد</b>
+                            </div>
                             <div class="stage-item"><input type="checkbox" ${p['التخطيط'] ? 'checked' : ''} onchange="updateStage('${pId}', 'التخطيط', this.checked)"> التخطيط</div>
                             <div class="stage-item"><input type="checkbox" ${p['بناء قاعدة البيانات'] ? 'checked' : ''} onchange="updateStage('${pId}', 'بناء قاعدة البيانات', this.checked)"> القاعدة</div>
                             <div class="stage-item"><input type="checkbox" ${p['بناء الواجهة'] ? 'checked' : ''} onchange="updateStage('${pId}', 'بناء الواجهة', this.checked)"> الواجهة</div>
                             <div class="stage-item"><input type="checkbox" ${p['النشر'] ? 'checked' : ''} onchange="updateStage('${pId}', 'النشر', this.checked)"> النشر</div>
                         </div>
 
-                        <!-- قسم المناقشة -->
                         <div class="discussion-section">
-                            <h4 style="margin:0 0 10px 0; color:#374151;">💬 ساحة المناقشة</h4>
-                            <div class="chat-box" id="chat-${pId}">
-                                ${commentsHTML}
-                            </div>
-                            
-                            <!-- نموذج الرد -->
+                            <div class="chat-box">${commentsHTML}</div>
                             <form class="reply-form" onsubmit="submitReply(event, '${pId}')">
-                                <select required id="author-${pId}">
-                                    <option value="الطالب">طالب</option>
-                                    <option value="الدكتور">دكتور</option>
-                                </select>
-                                <textarea id="text-${pId}" required placeholder="اكتب ردك هنا..."></textarea>
-                                <button type="submit">إرسال الرد</button>
+                                <select id="author-${pId}"><option value="الطالب">طالب</option><option value="الدكتور">دكتور</option></select>
+                                <textarea id="text-${pId}" required placeholder="اكتب رداً..."></textarea>
+                                <button type="submit">إرسال</button>
                             </form>
                         </div>
                     </div>
                 `;
             });
-        } catch (error) { 
-            console.error(error);
-            listDiv.innerHTML = '<h3 style="color:red; text-align:center;">حدث خطأ في تحميل البيانات ❌</h3>';
+        } catch (error) { listDiv.innerHTML = '<p style="color:red; text-align:center;">خطأ في الاتصال بالقاعدة.</p>'; }
+    }
+
+    // تحديث الحالة (مراحل أو اعتماد)
+    async function updateStage(id, field, value) {
+        if(field === 'الضوء الأخضر') {
+            const pass = prompt("أدخل رمز المرور الإداري لتغيير حالة الاعتماد:");
+            if(pass !== ADMIN_PASS) { alert("رمز خاطئ!"); loadDashboard(); return; }
+        }
+        try {
+            await fetch(`https://api.airtable.com/v0/${BASE_ID}/${PROJECTS_TABLE}/${id}`, {
+                method: 'PATCH', headers, body: JSON.stringify({ fields: { [field]: value } })
+            });
+            if(field === 'الضوء الأخضر') loadDashboard();
+        } catch (e) { alert("فشل التحديث"); }
+    }
+
+    // حذف مشروع
+    async function deleteProject(id) {
+        const pass = prompt("أدخل رمز المرور للحذف النهائي:");
+        if(pass !== ADMIN_PASS) { alert("رمز خاطئ!"); return; }
+        if(confirm("هل أنت متأكد من حذف هذا المشروع وكافة مناقشاته؟")) {
+            try {
+                await fetch(`https://api.airtable.com/v0/${BASE_ID}/${PROJECTS_TABLE}/${id}`, { method: 'DELETE', headers });
+                loadDashboard();
+            } catch (e) { alert("فشل الحذف"); }
         }
     }
 
-    // إضافة تعليق جديد
-    async function submitReply(event, projectId) {
-        event.preventDefault();
+    // إرسال رد
+    async function submitReply(e, pId) {
+        e.preventDefault();
+        const author = document.getElementById(`author-${pId}`).value;
+        const text = document.getElementById(`text-${pId}`).value;
         
-        const authorField = document.getElementById(`author-${projectId}`).value;
-        const textField = document.getElementById(`text-${projectId}`).value;
-        const statusDiv = document.getElementById('global-status');
-        const submitBtn = event.target.querySelector('button');
-        
-        // ميزة أمان بسيطة: إذا اختار "دكتور"، نسأله عن كلمة مرور بسيطة لكي لا يكتب الطلاب باسمك
-        if(authorField === 'الدكتور') {
-            const pass = prompt("الرجاء إدخال رمز المرور الخاص بالدكتور:");
-            if(pass !== "1234") { // يمكنك تغيير الرمز هنا
-                alert("رمز المرور خاطئ! لا يمكنك النشر بصلاحية الدكتور.");
-                return;
-            }
+        if(author === 'الدكتور') {
+            const pass = prompt("رمز مرور الدكتور:");
+            if(pass !== ADMIN_PASS) { alert("غير مصرح لك!"); return; }
         }
-
-        submitBtn.disabled = true;
-        submitBtn.innerText = '...';
-
-        const bodyData = {
-            records: [{
-                fields: {
-                    "الرد/التعليق": textField,
-                    "هوية الكاتب": authorField,
-                    "المشروع المرتبط": [projectId] // ربط التعليق بـ ID المشروع
-                }
-            }]
-        };
 
         try {
             const res = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${COMMENTS_TABLE}`, {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(bodyData)
+                method: 'POST', headers, body: JSON.stringify({ records: [{ fields: { "الرد/التعليق": text, "هوية الكاتب": author, "المشروع المرتبط": [pId] } }] })
             });
-            if(res.ok) {
-                statusDiv.style.color = 'green';
-                statusDiv.innerText = 'تم إرسال ردك بنجاح ✅';
-                loadDashboard(); // إعادة تحميل لتحديث التعليقات
-            } else { throw new Error('فشل الإرسال'); }
-        } catch (error) {
-            alert("حدث خطأ أثناء إرسال التعليق");
-        } finally {
-            setTimeout(() => { statusDiv.innerText = ''; }, 3000);
-        }
+            if(res.ok) loadDashboard();
+        } catch (e) { alert("خطأ في الإرسال"); }
     }
 
-    // تحديث حالة المرحلة (Checkbox)
-    async function updateStage(recordId, fieldName, value) {
-        try {
-            await fetch(`https://api.airtable.com/v0/${BASE_ID}/${PROJECTS_TABLE}/${recordId}`, {
-                method: 'PATCH',
-                headers: headers,
-                body: JSON.stringify({ fields: { [fieldName]: value } })
-            });
-        } catch (e) { console.error(e); }
-    }
-
-    // إرسال فكرة مشروع جديد
+    // إرسال مشروع جديد
     document.getElementById('projectForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
-        const statusDiv = document.getElementById('global-status');
         btn.disabled = true; btn.innerText = 'جاري الإرسال...';
-        
-        const bodyData = {
-            records: [{
-                fields: {
-                    "اسم الطالب": document.getElementById('studentName').value,
-                    "عنوان الفكرة": document.getElementById('projectTitle').value,
-                    "شرح الفكرة": document.getElementById('projectDesc').value
-                }
-            }]
+        const fields = {
+            "اسم الطالب": document.getElementById('studentName').value,
+            "عنوان الفكرة": document.getElementById('projectTitle').value,
+            "شرح الفكرة": document.getElementById('projectDesc').value
         };
-
         try {
-            const res = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${PROJECTS_TABLE}`, { method: 'POST', headers, body: JSON.stringify(bodyData) });
-            if(res.ok) {
-                statusDiv.style.color = 'green';
-                statusDiv.innerText = 'تم تسجيل المشروع بنجاح ✅';
-                document.getElementById('projectForm').reset();
-                loadDashboard();
-            }
-        } catch(e) { console.error(e); } finally {
-            btn.disabled = false; btn.innerText = 'إرسال الفكرة';
-            setTimeout(() => { statusDiv.innerText = ''; }, 3000);
-        }
+            const res = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${PROJECTS_TABLE}`, {
+                method: 'POST', headers, body: JSON.stringify({ records: [{ fields }] })
+            });
+            if(res.ok) { document.getElementById('projectForm').reset(); loadDashboard(); }
+        } finally { btn.disabled = false; btn.innerText = 'إرسال الفكرة'; }
     });
 
-    // تشغيل عند فتح الصفحة
     loadDashboard();
 </script>
 </body>
