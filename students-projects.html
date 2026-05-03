@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم مشاريع الطلاب</title>
+    <style>
+        :root {
+            --primary: #10b981;
+            --secondary: #059669;
+            --bg: #f3f4f6;
+            --card-bg: #ffffff;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            margin: 0; padding: 20px; color: #1f2937;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 40px; }
+        
+        /* تنسيق النموذج */
+        .form-section {
+            background: var(--card-bg); padding: 25px;
+            border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea {
+            width: 100%; padding: 10px; border: 1px solid #d1d5db;
+            border-radius: 8px; font-family: inherit; box-sizing: border-box;
+            transition: 0.3s;
+        }
+        input:focus, textarea:focus { border-color: var(--primary); outline: none; }
+        button {
+            background: var(--primary); color: white; border: none;
+            padding: 12px 25px; border-radius: 8px; cursor: pointer;
+            width: 100%; font-weight: bold; font-size: 16px; transition: 0.3s;
+        }
+        button:hover { background: var(--secondary); transform: translateY(-2px); }
+
+        /* تنسيق بطاقات المشاريع */
+        .project-card {
+            background: var(--card-bg); border-radius: 12px; padding: 20px;
+            margin-bottom: 20px; border-right: 6px solid var(--primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: 0.3s;
+        }
+        .project-card:hover { box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+        .status-badge {
+            float: left; padding: 4px 12px; border-radius: 20px;
+            font-size: 0.8em; font-weight: bold;
+        }
+        .status-approved { background: #d1fae5; color: #065f46; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        
+        /* تنسيق المراحل */
+        .stages-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px; margin: 20px 0; background: #f9fafb; padding: 15px; border-radius: 8px;
+        }
+        .stage-item { display: flex; align-items: center; gap: 8px; font-size: 0.9em; font-weight: bold;}
+        .stage-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+        
+        .feedback-box {
+            background: #eff6ff; border: 1px dashed #3b82f6;
+            padding: 10px; border-radius: 8px; font-style: italic; margin-top: 10px;
+        }
+        #status-msg { text-align: center; margin-top: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🚀 منصة مشاريع الطلاب</h1>
+        <p>سجل فكرتك وتابع مراحل إنجازك خطوة بخطوة</p>
+    </header>
+
+    <div class="form-section">
+        <h3>تقديم فكرة جديدة</h3>
+        <form id="projectForm">
+            <div class="form-group">
+                <label>اسم الطالب</label>
+                <input type="text" id="studentName" required placeholder="أدخل اسمك الكامل">
+            </div>
+            <div class="form-group">
+                <label>عنوان الفكرة</label>
+                <input type="text" id="projectTitle" required placeholder="ما هو اسم مشروعك؟">
+            </div>
+            <div class="form-group">
+                <label>شرح الفكرة</label>
+                <textarea id="projectDesc" rows="4" required placeholder="اشرح فكرتك التقنية هنا..."></textarea>
+            </div>
+            <button type="submit" id="submitBtn">إرسال الفكرة للمناقشة</button>
+            <div id="status-msg"></div>
+        </form>
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 40px 0;">
+
+    <div id="projectsList">
+        <h2 style="text-align: center;">جاري جلب المشاريع... ⏳</h2>
+    </div>
+</div>
+
+<script>
+    // إعدادات الاتصال بـ Airtable بناءً على بياناتك
+    const BASE_ID = 'appGRPTNdapbfHFVj'; 
+    const TABLE_ID = 'tblbntjxitx37Xmet'; 
+    const PAT = 'patzRHjvmJlAoNz4w.1419f7b883c2e1222e48776065cbef112ef4448658666f6c83959d448a75c664'; 
+
+    const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}`;
+    const headers = { 
+        'Authorization': `Bearer ${PAT}`, 
+        'Content-Type': 'application/json' 
+    };
+
+    // جلب وعرض المشاريع
+    async function fetchProjects() {
+        const listDiv = document.getElementById('projectsList');
+        try {
+            // جلب البيانات بترتيب أحدث إنشاء أولاً
+            const response = await fetch(`${url}?sort[0][field]=تاريخ التسجيل&sort[0][direction]=desc`, { headers });
+            const data = await response.json();
+            
+            listDiv.innerHTML = '<h2>📚 قائمة الأفكار والمشاريع</h2>';
+            
+            if(!data.records || data.records.length === 0) {
+                listDiv.innerHTML += '<p style="text-align:center; color:#6b7280;">لا توجد مشاريع مسجلة حتى الآن. كن أول من يضيف فكرة!</p>';
+                return;
+            }
+
+            data.records.forEach(record => {
+                const f = record.fields;
+                const statusClass = f['الضوء الأخضر'] ? 'status-approved' : 'status-pending';
+                const statusText = f['الضوء الأخضر'] ? 'تم الاعتماد ✅' : 'قيد المراجعة ⏳';
+                
+                listDiv.innerHTML += `
+                    <div class="project-card">
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                        <h3 style="margin-top:0;">${f['عنوان الفكرة'] || 'بدون عنوان'}</h3>
+                        <p><strong>الطالب:</strong> ${f['اسم الطالب'] || 'غير معروف'}</p>
+                        <p>${f['شرح الفكرة'] || ''}</p>
+                        
+                        <div class="stages-grid">
+                            ${createStageCheckbox(record.id, 'التخطيط', f['التخطيط'])}
+                            ${createStageCheckbox(record.id, 'بناء قاعدة البيانات', f['بناء قاعدة البيانات'])}
+                            ${createStageCheckbox(record.id, 'بناء الواجهة', f['بناء الواجهة'])}
+                            ${createStageCheckbox(record.id, 'النشر', f['النشر'])}
+                        </div>
+
+                        <div class="feedback-box">
+                            <strong>💬 تعليق الدكتور:</strong><br>
+                            ${f['تعليق الدكتور'] || '<span style="color:#9ca3af;">لم يتم إضافة تعليق بعد...</span>'}
+                        </div>
+                    </div>
+                `;
+            });
+        } catch (error) { 
+            console.error('Error fetching data:', error);
+            listDiv.innerHTML = '<h2 style="color:red; text-align:center;">حدث خطأ في جلب البيانات من Airtable ❌</h2>';
+        }
+    }
+
+    // بناء مربعات الاختيار (Checkboxes) للمراحل
+    function createStageCheckbox(id, label, isChecked) {
+        return `
+            <div class="stage-item">
+                <input type="checkbox" ${isChecked ? 'checked' : ''} 
+                    onchange="updateStage('${id}', '${label}', this.checked)">
+                <span>${label}</span>
+            </div>
+        `;
+    }
+
+    // تحديث حالة المرحلة مباشرة عند الضغط على Checkbox
+    async function updateStage(recordId, fieldName, value) {
+        try {
+            await fetch(`${url}/${recordId}`, {
+                method: 'PATCH',
+                headers: headers,
+                body: JSON.stringify({ fields: { [fieldName]: value } })
+            });
+            // اختياري: يمكنك إضافة تنبيه صغير هنا بنجاح التحديث
+        } catch (error) { 
+            alert('❌ فشل تحديث حالة المرحلة. تأكد من اتصالك بالإنترنت.'); 
+        }
+    }
+
+    // إرسال فكرة جديدة إلى Airtable
+    document.getElementById('projectForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const btn = document.getElementById('submitBtn');
+        const statusMsg = document.getElementById('status-msg');
+        
+        btn.disabled = true; 
+        btn.innerText = 'جاري إرسال الفكرة... ⏳';
+        statusMsg.innerText = '';
+
+        const bodyData = {
+            records: [{
+                fields: {
+                    "اسم الطالب": document.getElementById('studentName').value,
+                    "عنوان الفكرة": document.getElementById('projectTitle').value,
+                    "شرح الفكرة": document.getElementById('projectDesc').value
+                }
+            }]
+        };
+
+        try {
+            const response = await fetch(url, { 
+                method: 'POST', 
+                headers: headers, 
+                body: JSON.stringify(bodyData) 
+            });
+            
+            if (response.ok) {
+                statusMsg.style.color = '#10b981';
+                statusMsg.innerText = 'تم إرسال فكرتك بنجاح! ✅';
+                document.getElementById('projectForm').reset();
+                fetchProjects(); // تحديث القائمة فوراً
+            } else {
+                throw new Error('فشل الحفظ');
+            }
+        } catch (error) {
+            statusMsg.style.color = 'red';
+            statusMsg.innerText = '❌ حدث خطأ أثناء الإرسال. تأكد من إعدادات الجدول.';
+            console.error(error);
+        } finally {
+            btn.disabled = false; 
+            btn.innerText = 'إرسال الفكرة للمناقشة';
+            
+            // إخفاء رسالة النجاح بعد 3 ثواني
+            setTimeout(() => { statusMsg.innerText = ''; }, 3000);
+        }
+    });
+
+    // استدعاء دالة جلب البيانات عند فتح الصفحة
+    fetchProjects();
+</script>
+</body>
+</html>
